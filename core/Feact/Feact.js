@@ -1,4 +1,5 @@
 import FeactCompositeComponentWrapper from "../FeactCompositeComponentWrapper/FeactCompositeComponentWrapper.js";
+import FeactReconciler from "../FeactReconciler/FeactReconciler.js";
 
 const TopLevelWrapper = function (props) {
     this.props = props;
@@ -13,9 +14,8 @@ const Feact = {
         function Constructor(props) {
             this.props = props;
         }
-
-        Constructor.prototype.render = spec.render;
-
+        Constructor.prototype =
+            Object.assign(Constructor.prototype, spec);
         return Constructor;
     },
 
@@ -33,9 +33,14 @@ const Feact = {
     },
 
     render(element, container) {
-        const wrapperElement =  this.createElement(TopLevelWrapper, element);
-        const componentInstance = new FeactCompositeComponentWrapper(wrapperElement);
-        return componentInstance.mountComponent(container);
+        const wrapperElement =
+            this.createElement(TopLevelWrapper, element);
+        const componentInstance =
+            new FeactCompositeComponentWrapper(wrapperElement);
+        return FeactReconciler.mountComponent(
+            componentInstance,
+            container
+        );
     }
 }
 

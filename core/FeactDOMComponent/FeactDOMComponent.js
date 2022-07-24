@@ -1,4 +1,7 @@
-export default class FeactDOMComponent {
+/**
+ * Создает DOM-ноду
+ */
+class FeactDOMComponent {
     constructor(element) {
         this._currentElement = element;
     }
@@ -16,3 +19,5 @@ export default class FeactDOMComponent {
         return domElement;
     }
 }
+
+export default FeactDOMComponent

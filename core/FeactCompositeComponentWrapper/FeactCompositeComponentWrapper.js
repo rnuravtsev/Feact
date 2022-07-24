@@ -1,4 +1,10 @@
-import FeactDOMComponent from "../FeactDOMComponent/FeactDOMComponent.js";
+import FeactReconciler, { instantiateFeactComponent } from "../FeactReconciler/FeactReconciler.js";
+
+/**
+ * ReactCompositeComponentWrapper
+ * Тюнер наших компонент
+ * добавляет компоненту все методы жизненного цикла
+ */
 
 export default class FeactCompositeComponentWrapper {
     constructor(element) {
@@ -9,13 +15,21 @@ export default class FeactCompositeComponentWrapper {
         const Component = this._currentElement.type;
         const componentInstance =
             new Component(this._currentElement.props);
-        let element = componentInstance.render();
-
-        while (typeof element.type === 'function') {
-            element = (new element.type(element.props)).render();
+        this._instance = componentInstance;
+        if (componentInstance.componentWillMount) {
+            componentInstance.componentWillMount();
         }
+        const markUp = this.performInitialMount(container);
+        if (componentInstance.componentDidMount) {
+            componentInstance.componentDidMount();
+        }
+        return markUp;
+    }
 
-        const domComponentInstance = new FeactDOMComponent(element);
-        domComponentInstance.mountComponent(container);
+    performInitialMount(container) {
+        const renderedElement = this._instance.render();
+        const child = instantiateFeactComponent(renderedElement);
+        this._renderedComponent = child;
+        return FeactReconciler.mountComponent(child, container);
     }
 }
