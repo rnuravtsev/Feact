@@ -1,6 +1,31 @@
 import FeactCompositeComponentWrapper from "../FeactCompositeComponentWrapper/FeactCompositeComponentWrapper.js";
 import FeactReconciler from "../FeactReconciler/FeactReconciler.js";
 
+function renderNewRootComponent(element, container) {
+    const wrapperElement =
+        Feact.createElement(TopLevelWrapper, element);
+    const componentInstance =
+        new FeactCompositeComponentWrapper(wrapperElement);
+    const markUp = FeactReconciler.mountComponent(
+        componentInstance,
+        container
+    );
+    // new line here, store the component instance on the container
+    // we want its _renderedComponent because componentInstance is just
+    // the TopLevelWrapper, which we don't need for updates
+    container.__feactComponentInstance =
+        componentInstance._renderedComponent;
+}
+
+function getTopLevelComponentInContainer(container) {
+    return container.__feactComponentInstance;
+}
+
+function updateRootComponent(prevComponent, nextElement) {
+    prevComponent.receiveComponent(nextElement)
+}
+
+
 const TopLevelWrapper = function (props) {
     this.props = props;
 };
@@ -33,15 +58,16 @@ const Feact = {
     },
 
     render(element, container) {
-        const wrapperElement =
-            this.createElement(TopLevelWrapper, element);
-        const componentInstance =
-            new FeactCompositeComponentWrapper(wrapperElement);
-        return FeactReconciler.mountComponent(
-            componentInstance,
-            container
-        );
-    }
-}
+        const prevComponent =
+            getTopLevelComponentInContainer(container);
+        if (prevComponent) {
+            return updateRootComponent(
+                prevComponent,
+                element
+            );
+        } else {
+            return renderNewRootComponent(element, container);
+        }
+    }}
 
 export default Feact

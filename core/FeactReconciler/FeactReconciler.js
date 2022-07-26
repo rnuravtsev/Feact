@@ -13,6 +13,10 @@ export function instantiateFeactComponent(element) {
 const FeactReconciler = {
     mountComponent(internalInstance, container) {
         return internalInstance.mountComponent(container);
+    },
+
+    receiveComponent(internalInstance, nextElement) {
+        internalInstance.receiveComponent(nextElement);
     }
 };
 
