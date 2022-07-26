@@ -30,8 +30,37 @@ const TopLevelWrapper = function (props) {
     this.props = props;
 };
 
+function FeactComponent() {
+}
+
+function mixSpecIntoComponent(Constructor, spec) {
+    const proto = Constructor.prototype;
+    for (const key in spec) {
+        proto[key] = spec[key];
+    }
+}
+
+FeactComponent.prototype.setState = function(partialState) {
+    const internalInstance = FeactInstanceMap.get(this);
+    internalInstance._pendingPartialState = internalInstance._pendingPartialState || [];
+    internalInstance.push(partialState);
+    if (!internalInstance._rendering) {
+        FeactReconciler.performUpdateIfNecessary(internalInstance);
+    }
+
+};
+
 TopLevelWrapper.prototype.render = function () {
     return this.props;
+};
+
+export const FeactInstanceMap = {
+    set(key, value) {
+        key.__feactInternalInstance = value;
+    },
+    get(key) {
+        return key.__feactInternalInstance;
+    }
 };
 
 const Feact = {
@@ -39,8 +68,13 @@ const Feact = {
         function Constructor(props) {
             this.props = props;
         }
-        Constructor.prototype =
-            Object.assign(Constructor.prototype, spec);
+
+        const initialState = this.getInitialState ? this.getInitialState() : null;
+        this.state = initialState;
+
+        Constructor.prototype = new FeactComponent();
+
+        mixSpecIntoComponent(Constructor, spec);
         return Constructor;
     },
 

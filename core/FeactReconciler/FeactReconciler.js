@@ -17,6 +17,10 @@ const FeactReconciler = {
 
     receiveComponent(internalInstance, nextElement) {
         internalInstance.receiveComponent(nextElement);
+    },
+
+    performUpdateIfNecessary(internalInstance) {
+        internalInstance.performUpdateIfNecessary();
     }
 };
 
