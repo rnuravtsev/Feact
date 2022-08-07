@@ -1,4 +1,4 @@
-import Example from "./core/Impact/Example.js";
-import render from "./core/Impact/render.js";
+import Example from "./Impact/components/Example.js";
+import render from "./Impact/core/render.js";
 
-render(Example, document.querySelector('#root'))
+render(Example)
