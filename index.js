@@ -3,21 +3,21 @@ const root = document.querySelector('#root')
 const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
 
 /**
- * Всевозможные типы элемента
- * @typedef {string | HTMLElement | Class} ElementType
- */
-
-/**
- * Описывает структуру экземпляра
- * @typedef {{}} Element — элемент Mew
- * @property {string} type - html-тег
+ * Элемент Mew
+ * @typedef {{}} Element
+ * @property {ElementType} type
  * @property {{}} props - конфиг
  * @property {Element[] | []} props.children - дети
  */
 
 /**
- * Представляет собой обычный JS объект со свойствами:
+ * Всевозможные типы элемента
+ * @typedef {string | HTMLElement | Class} ElementType
+ */
+
+/**
  * Полноценная сущность в виде экземпляра (без локального состояния)
+ * Любой элемент преобразуется в Инстанс, это нужно для оптимальной работы с DOM
  * @typedef {{}} Instance — экземпляр Mew
  * @property {Element} element — текущий элемент
  * @property {HTMLElement} dom — ссылка на предыдущую DOM-ноду
@@ -25,7 +25,7 @@ const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
  * */
 
 /**
- * Экземпляр унаследованный от базового класса Component (чтобы у него было состояние, жизненные методы)
+ * Экземпляр унаследованный от базового класса Component (с локальным состоянием)
  * @typedef {{}} PublicInstance
  * @property {HTMLElement} dom — ссылка на DOM
  * @property {Element} element — текущий элемент
@@ -37,13 +37,12 @@ const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
 
 /**
  * Главная функция для создания элемента
- * Обрабатывает как элементы с заданным типом (с html-тегом), так и без (строчные)
+ * Обрабатывает как элементы с заданным типом (с html-тегом или class), так и без (строчные)
  * @param {ElementType} type тип Mew
  * @param {{}} config пропсы Mew
  * @param {*} args дочерние элементы Mew
  * @return {{type, props}}
  */
-// Разобрать в чем проблема создания обычных текстовых нод
 const createElement = (type, config = {}, ...args) => {
     const props = { ...config }
 
@@ -51,7 +50,11 @@ const createElement = (type, config = {}, ...args) => {
 
     return { type, props }
 }
-
+/**
+ * Функция для создания строчных DOM-узлов
+ * @param {string} value
+ * @return {{type, props}}
+ */
 const createTextElement = (value) => {
     return createElement(TEXT_ELEMENT_TYPE, { nodeValue: value })
 }
@@ -131,14 +134,13 @@ function reconcileChildren(instance, element) {
 /**
  * Преобразование элемента в экземпляр.
  * Экземпляр имеет своё состояние, и хранит ссылку на предыдущее состояние DOM ноды
- * @param {ElementType} element
+ * @param {Element} element
  * @return {{dom: (*|Text), childInstances: unknown[], element}|{}}
  */
 const instantiate = (element) => {
     const { type, props } = element
     const isDomElement = typeof type === 'string'
     if (isDomElement) {
-        // Разобрать почему здесь так
         const dom = type !== TEXT_ELEMENT_TYPE
             ? document.createElement(type)
             : document.createTextNode(props.nodeValue)
@@ -146,12 +148,9 @@ const instantiate = (element) => {
         updateDomProperties(dom, [], props)
 
         const childProps = props.children || []
-        let childInstances
-        if (childProps.length) {
-            childInstances = childProps.map(instantiate)
-            const childDom = childInstances.map(el => el.dom)
-            childDom.forEach(el => dom.appendChild(el))
-        }
+        const childInstances = childProps.map(instantiate)
+        const childDom = childInstances.map(el => el.dom)
+        childDom.forEach(el => dom.appendChild(el))
 
         return { dom, element, childInstances }
     } else {
@@ -272,13 +271,12 @@ class Example extends Component {
 // const listy = createElement('ul', null, ...itemsy)
 const textNode = createTextElement('text')
 
-const compositeElement = createElement('div',{},
+const compositeElement = createElement('div', {},
     createElement('span', {},
-        createElement('span', {textContent: 'text4'})
-        ))
+        createElement('span', { textContent: 'text4' })
+    ))
 
 const resolveElement = createElement(Example)
 
-// renderTy(resolveElement)
 render(compositeElement)
 render(resolveElement)
