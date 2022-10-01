@@ -1,5 +1,5 @@
-import {FeactInstanceMap} from "../Feact/Feact.js";
-import FeactReconciler, {instantiateFeactComponent} from "../FeactReconciler/FeactReconciler.js";
+import {FeactInstanceMap} from "./Feact.js";
+import FeactReconciler, {instantiateFeactComponent} from "./FeactReconciler.js";
 
 /**
  * ReactCompositeComponentWrapper

@@ -1,10 +1,19 @@
-import { mockData } from "../data.js";
-import { Item } from "./Item.js";
+import { createElement } from "../core/createElement.js";
+import Component from "../core/Component.js";
+import Item from "./Item.js";
 
-const List = {
-  type: 'ul',
-  props: {
-    children: mockData.map(Item)
+class List extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    const { items } = this.props
+
+    return (
+        createElement('ul', null,
+            items.map(({ title, count }) => createElement(Item, { title, count }))
+        ))
   }
 }
 

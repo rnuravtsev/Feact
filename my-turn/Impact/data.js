@@ -1,10 +1,10 @@
 export const mockData = [
   {
-    title: 'WoW',
-    count: 1,
+    title: 'First',
+    count: 0,
   },
   {
-    title: 'Oops',
-    count: 2,
+    title: 'Second',
+    count: 0,
   }
 ]

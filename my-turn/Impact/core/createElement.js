@@ -1,12 +1,22 @@
 import { TEXT_ELEMENT } from "./consts.js";
 
-function createElement(type, config, ...args) {
+/**
+ * Функция для создания элементов
+ * @param {string|{}} type
+ * @param {{}} config - props
+ * @param args - Children
+ * @return {{type, props: *}}
+ */
+
+export function createElement(type, config = {}, ...args) {
   const props = Object.assign({}, config);
   const hasChildren = args.length > 0;
   const rawChildren = hasChildren ? [].concat(...args) : [];
+
   props.children = rawChildren
-    .filter(c => c != null && c !== false)
-    .map(c => c instanceof Object ? c : createTextElement(c));
+    .filter(children => children !== null && children !== false)
+    .map(children => children instanceof Object ? children : createTextElement(children));
+
   return { type, props };
 }
 

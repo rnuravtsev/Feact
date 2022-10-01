@@ -1,3 +1,4 @@
+import Component from "../core/Component.js";
 import render from "../core/render.js";
 import List from "./List.js";
 
@@ -7,19 +8,23 @@ import List from "./List.js";
  * @param {Object} props Параметры компонента
  * @param {Array} props.children Массив вложенных элементов
  */
-const Example = {
-    type: "button",
-    props: {
-        id: "container",
-        className: "awesome",
-        onClick: (e) => {
-            render(List)
-        },
-        children: [
-            // { type: "input", props: { value: "foo", type: "text" } },
-            // { type: "a", props: { href: "/bar" } },
-            { type: "span", props: { textContent: 'text' } }
-        ]
+class Example extends Component {
+    render() {
+        return {
+            type: "button",
+            props: {
+                id: "container",
+                className: "awesome",
+                onClick: (e) => {
+                    render(List)
+                },
+                children: [
+                    // { type: "input", props: { value: "foo", type: "text" } },
+                    // { type: "a", props: { href: "/bar" } },
+                    { type: "span", props: { textContent: 'text' } }
+                ]
+            }
+        }
     }
 };
 

@@ -1,5 +1,5 @@
-import FeactCompositeComponentWrapper from "../FeactCompositeComponentWrapper/FeactCompositeComponentWrapper.js";
-import FeactReconciler from "../FeactReconciler/FeactReconciler.js";
+import FeactCompositeComponentWrapper from "./FeactCompositeComponentWrapper.js";
+import FeactReconciler from "./FeactReconciler.js";
 
 function renderNewRootComponent(element, container) {
     const wrapperElement =
@@ -13,8 +13,7 @@ function renderNewRootComponent(element, container) {
     // new line here, store the component instance on the container
     // we want its _renderedComponent because componentInstance is just
     // the TopLevelWrapper, which we don't need for updates
-    container.__feactComponentInstance =
-        componentInstance._renderedComponent;
+    container.__feactComponentInstance = componentInstance._renderedComponent;
 }
 
 function getTopLevelComponentInContainer(container) {

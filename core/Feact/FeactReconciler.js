@@ -1,7 +1,7 @@
-import FeactDOMComponent from "../FeactDOMComponent/FeactDOMComponent.js";
+import FeactDOMComponent from "./FeactDOMComponent.js";
 import FeactCompositeComponentWrapper
-    from "../FeactCompositeComponentWrapper/FeactCompositeComponentWrapper.js";
-import Transaction from '../Transaction/Transaction.js'
+    from "./FeactCompositeComponentWrapper.js";
+import Transaction from './Transaction.js'
 
 export function instantiateFeactComponent(element) {
     if (typeof element.type === 'string') {

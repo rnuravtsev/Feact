@@ -1,30 +1,38 @@
-import render from "../core/render.js";
-import List from "./List.js";
+import { createElement } from "../core/createElement.js";
+import Component from "../core/Component.js";
 
-export const Item = (props) => {
-  const { count } = props
+class Item extends Component {
+    constructor(props) {
+        super(props);
 
-  const handleClick = (props) => {
-    props.count = props.count + 1;
-    render(List)
-  }
+        this.state = {
+            count: 0
+        }
 
-  return (
-    {
-      type: 'li',
-      props: {
-        children: [
-          {
-            type: 'button',
-            props: {
-              textContent: `${count}`,
-              onClick: () => {
-                handleClick(props)
-              },
-            }
-          }
-        ]
-      }
+        this.handleClick = this.handleClick.bind(this)
     }
-  )
+
+    handleClick() {
+        const { count } = this.state
+
+        this.setState({
+            count: count + 1
+        })
+    }
+
+    render() {
+        const { title, count: propsCount } = this.props
+        const { count: stateCount } = this.state || {}
+
+        return (
+            createElement('li', null,
+                createElement('button', {
+                    textContent: `${title} — ${stateCount || propsCount}`,
+                    onClick: this.handleClick
+                }))
+        )
+    }
 }
+
+
+export default Item
