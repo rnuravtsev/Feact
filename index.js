@@ -3,6 +3,11 @@ const root = document.querySelector('#root')
 const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
 
 /**
+ * Всевозможные типы элемента Mew
+ * @typedef {string | HTMLElement | Class} ElementType
+ */
+
+/**
  * Элемент Mew
  * @typedef {{}} Element
  * @property {ElementType} type
@@ -11,16 +16,11 @@ const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
  */
 
 /**
- * Всевозможные типы элемента
- * @typedef {string | HTMLElement | Class} ElementType
- */
-
-/**
  * Полноценная сущность в виде экземпляра (без локального состояния)
  * Любой элемент преобразуется в Инстанс, это нужно для оптимальной работы с DOM
  * @typedef {{}} Instance — экземпляр Mew
- * @property {Element} element — текущий элемент
  * @property {HTMLElement} dom — ссылка на предыдущую DOM-ноду
+ * @property {Element} element — текущий элемент
  * @property {Instance[]} childInstances — экземпляры-дети
  * */
 
@@ -51,7 +51,7 @@ const createElement = (type, config = {}, ...args) => {
     return { type, props }
 }
 /**
- * Функция для создания строчных DOM-узлов
+ * Функция для создания текстовых DOM-узлов
  * @param {string} value
  * @return {{type, props}}
  */
@@ -76,8 +76,8 @@ const render = (element, parent = root) => {
  * Сверка предыдущего экземпляра с текущим и обновление/вставка в DOM
  * Алгоритм при котором достигается быстрая работа приложений (а именно работа с DOM), написанных на react
  * Основная цель — максимально избегать создания или удаления экземпляров
- * @param {HTMLElement} container
- * @param {PublicInstance} prev предыдущий экземпляр
+ * @param {ParentNode} container
+ * @param {Instance | PublicInstance} prev предыдущий экземпляр
  * @param {Element} next текущий элемент
  */
 const reconcile = (container, prev, next) => {
