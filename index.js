@@ -41,7 +41,7 @@ const TEXT_ELEMENT_TYPE = 'TEXT_ELEMENT'
  * @param {ElementType} type тип Mew
  * @param {{}} config пропсы Mew
  * @param {*} args дочерние элементы Mew
- * @return {{type, props}}
+ * @return Element
  */
 const createElement = (type, config = {}, ...args) => {
     const props = { ...config }
@@ -53,10 +53,23 @@ const createElement = (type, config = {}, ...args) => {
 /**
  * Функция для создания текстовых DOM-узлов
  * @param {string} value
- * @return {{type, props}}
+ * @return Element
  */
 const createTextElement = (value) => {
     return createElement(TEXT_ELEMENT_TYPE, { nodeValue: value })
+}
+
+/**
+ * Функция для создания экземпляра компонента
+ * @param {Class} element
+ * @param {{}} internalInstance — пустой объект
+ * @return {*}
+ */
+const createPublicInstance = (element, internalInstance) => {
+    const { type, props } = element;
+    const publicInstance = new type(props);
+    publicInstance.__internalInstance = internalInstance;
+    return publicInstance;
 }
 
 /**
@@ -156,11 +169,12 @@ const instantiate = (element) => {
     } else {
         const instance = {}
         const publicInstance = createPublicInstance(element, instance)
-        const childElement = publicInstance.render()
-        const childInstance = instantiate(childElement)
-        const dom = childInstance.dom
 
-        Object.assign(instance, { dom, element, childInstance, publicInstance });
+        const innerElement = publicInstance.render()
+        const resolveElement = instantiate(innerElement)
+        const dom = resolveElement.dom
+
+        Object.assign(instance, { dom, element, resolveElement, publicInstance });
         return instance
     }
 }
@@ -196,19 +210,6 @@ const updateDomProperties = (dom, prevProps, nextProps) => {
 }
 
 /**
- * Функция для создания экземпляра компонента
- * @param {Class} element
- * @param {{}} internalInstance — пустой объект
- * @return {*}
- */
-const createPublicInstance = (element, internalInstance) => {
-    const { type, props } = element;
-    const publicInstance = new type(props);
-    publicInstance.__internalInstance = internalInstance;
-    return publicInstance;
-}
-
-/**
  * Функция обновления внутреннего поддерерва
  * @param {Instance} internalInstance
  */
@@ -218,7 +219,6 @@ const updateInstance = (internalInstance) => {
     reconcile(parentDom, internalInstance, instanceElement)
 }
 
-// Базовый класс Mew
 class Component {
     constructor(props) {
         this.props = props
@@ -261,14 +261,12 @@ class Example extends Component {
     }
 }
 
+// Компоненты с разным типом
 
-// const li = createElement('li', { textContent: 'li' })
-// const lili = createElement('li', { textContent: 'lili' })
+const li = createElement('li', { textContent: 'li' })
+const items = new Array(4).fill(li)
+const list = createElement('ul', null, ...items)
 
-// const items = new Array(4).fill(li)
-// const itemsy = new Array(4).fill(lili)
-// const list = createElement('ul', null, ...items)
-// const listy = createElement('ul', null, ...itemsy)
 const textNode = createTextElement('text')
 
 const compositeElement = createElement('div', {},
@@ -278,5 +276,7 @@ const compositeElement = createElement('div', {},
 
 const resolveElement = createElement(Example)
 
-render(compositeElement)
+// render(textNode)
+// render(list)
+// render(compositeElement)
 render(resolveElement)
